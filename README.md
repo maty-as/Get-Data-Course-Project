@@ -24,4 +24,4 @@ This script works as follows:
 
 
 Author:         matyas.theuer@gmail.com 
-Last edit:      22.1.2015      
+Last edit:      23.1.2015      
