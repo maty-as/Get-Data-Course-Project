@@ -67,6 +67,6 @@ tidy.data <- data %>% group_by(subject,activity) %>% summarise_each(funs(mean))
 
 # write results
 message("Writing results...")
-write.table(data, "UCI_HAR_data.csv", row.names=FALSE)
-write.table(tidy.data, "UCI_HAR_tidy_data.csv", row.names=FALSE)
+write.table(data, "UCI_HAR_data.txt", row.names=FALSE)
+write.table(tidy.data, "UCI_HAR_tidy_data.txt", row.names=FALSE)
 message("All done.")
