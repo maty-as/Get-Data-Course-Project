@@ -1,13 +1,15 @@
 ## Script for Coursera Getting and Cleaning Data course project 
 #  
-# This script does following: 
-# 1)  Merges the training and the test sets to create one data set.
-# 2)  Extracts only the measurements on the mean and standard deviation for each 
-#     measurement. 
-# 3)  Uses descriptive activity names to name the activities in the data set
-# 4)  Appropriately labels the data set with descriptive variable names. 
-# 5)  From the data set in step 4, creates a second, independent tidy data set 
-#     with the average of each variable for each activity and each subject.
+# This script works as follows: 
+#  1. Checks environment for existence of variables with raw data.
+#  2. If they not yet loaded, script reads appropriate files. If necessary, downloads them from internet.
+#  3. Merges test and train data sets.
+#  4. Assigns descriptive names to every column(provided by 'features.txt')
+#  5. Extracts only the measurements on the mean and standard deviation for each measurement.
+#  5. Lables activities by names using 'activity_labels.txt' 
+#  6. Merges all data together
+#  7. Creates new tidy data frame with average of each variable for each activity and each subject.
+#  8. Writes results to files for each activity and each subject.
 # 
 # Author:         matyas.theuer@gmail.com 
 # Last edit:      22.1.2015      
@@ -19,16 +21,16 @@ expectedVars <- c("test.subject","test.x","test.y","train.subject","train.x","tr
 
 # If not, read them
 if (!all(expectedVars %in% ls())){
-      print("Downloading data")
       
       # Check for presence of folder with data
       if (!file.exists("UCI HAR Dataset")) {
-            fileURL <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
-            download.file(fileURL, destfile="./UCI_HAR_data.zip", method="curl")
+            message("Downloading data...")
+            fileURL <- "http://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
+            download.file(fileURL, destfile="./UCI_HAR_data.zip", method="auto")
             unzip("UCI_HAR_data.zip")
       }
       # Read data form files
-      print("Reading data")
+      message("Reading data...")
       train.x <- read.table("UCI HAR Dataset/train/X_train.txt")
       train.y <- read.table("UCI HAR Dataset/train/y_train.txt")
       train.subject <- read.table("UCI HAR Dataset/train/subject_train.txt")
@@ -38,6 +40,7 @@ if (!all(expectedVars %in% ls())){
 }
 
 # Merge data sets
+message("Cleaning data...")
 data.x <- rbind(train.x, test.x)
 data.y <- rbind(train.y, test.y) 
 data.subject <- rbind(train.subject, test.subject)
@@ -63,6 +66,7 @@ data <- cbind(data.subject,data.y,data.x)
 tidy.data <- data %>% group_by(subject,activity) %>% summarise_each(funs(mean))
 
 # write results
-write.csv(data, "UCI_HAR_data.csv", row.names=FALSE)
-write.csv(tidy.data, "UCI_HAR_tidy_data.csv", row.names=FALSE)
-
+message("Writing results...")
+write.table(data, "UCI_HAR_data.csv", row.names=FALSE)
+write.table(tidy.data, "UCI_HAR_tidy_data.csv", row.names=FALSE)
+message("All done.")
